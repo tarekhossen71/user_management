@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\UserDelete;
 use App\Models\User;
 use App\Models\Address;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 
 class UserController extends Controller
 {
@@ -152,6 +154,8 @@ class UserController extends Controller
     public function destroy($id)
     {
         $user = User::where('id',$id)->first();
+
+        Mail::to($user->email)->send(new UserDelete($user));
 
         if($user->avater != null){
             if(file_exists('profile/'.$user->avater)){
